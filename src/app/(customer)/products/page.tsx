@@ -1,15 +1,20 @@
 import { ProductCard, ProductCardSkeleton } from "@/components/ProductCard";
 import db from "@/dbs/db";
+import { cache } from "@/lib/cache";
 import { Product } from "@prisma/client";
 import { get } from "http";
 import { Suspense } from "react";
 
-function getProducts() {
-  return db.product.findMany({ 
-    where: { isAvailableForPurchase: true },
-    orderBy: { createdAt: "asc" },    
-});
-}
+const getProducts = cache(
+  () => {
+    return db.product.findMany({
+      where: { isAvailableForPurchase: true },
+      orderBy: { createdAt: "asc" },
+    });
+  },
+  ["/products", "getProducts"],
+  { revalidate: 60 * 60 * 24 }
+);
 
 export default function ProductPage() {
   return (
@@ -18,7 +23,6 @@ export default function ProductPage() {
         <Suspense
           fallback={
             <>
-              <ProductCardSkeleton />
               <ProductCardSkeleton />
               <ProductCardSkeleton />
               <ProductCardSkeleton />
