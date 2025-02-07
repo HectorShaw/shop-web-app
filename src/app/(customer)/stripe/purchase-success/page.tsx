@@ -13,6 +13,8 @@ export default async function SuccessPage({
 }: {
   searchParams: { payment_intent: string };
 }) {
+
+  
   const paymentIntent = await stripe.paymentIntents.retrieve(
     searchParams.payment_intent
   );
@@ -30,7 +32,7 @@ export default async function SuccessPage({
   }
 
   const isSuccess = paymentIntent.status === "succeeded";
-  console.log("isSuccess:", isSuccess); 
+  // console.log("isSuccess:", isSuccess); 
 
   return (
     <div className="max-w-5xl w-full mx-auto space-y-8">
